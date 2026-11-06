@@ -8,6 +8,16 @@ services:
     volumes:
       - bike_model_data:/app/models
     restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://localhost:8080/metrics', timeout=5)"
+      interval: 5s
+      timeout: 6s
+      retries: 30
+      start_period: 60s
 
   prometheus:
     image: prom/prometheus:v3.5.0
@@ -59,7 +69,8 @@ services:
     build:
       context: ./src/evaluation
     depends_on:
-      - bike-api
+      bike-api:
+        condition: service_healthy
     profiles:
       - evaluation
 
