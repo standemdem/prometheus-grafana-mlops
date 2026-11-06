@@ -1,0 +1,11 @@
+groups:
+  - name: bike-sharing-alerts
+    rules:
+      - alert: BikeAPIUnavailable
+        expr: up{job="bike-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Bike Sharing API indisponible"
+          description: "Prometheus ne parvient plus à collecter les métriques de l'API depuis une minute."
